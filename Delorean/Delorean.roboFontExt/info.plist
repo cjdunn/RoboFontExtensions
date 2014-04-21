@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>addToMenu</key>
+	<array>
+		<dict>
+			<key>path</key>
+			<string>delorean.py</string>
+			<key>preferredName</key>
+			<string>Delorean: Interpolation Preview</string>
+			<key>shortKey</key>
+			<array>
+				<integer>0</integer>
+				<string>d</string>
+			</array>
+		</dict>
+	</array>
+	<key>developer</key>
+	<string>CJ Dunn</string>
+	<key>developerURL</key>
+	<string>https://github.com/cjdunn</string>
+	<key>html</key>
+	<true/>
+	<key>launchAtStartUp</key>
+	<integer>0</integer>
+	<key>mainScript</key>
+	<string></string>
+	<key>name</key>
+	<string>Delorean: Interpolation Preview</string>
+	<key>timeStamp</key>
+	<real>1398040399.630832</real>
+	<key>version</key>
+	<string>0.1</string>
+</dict>
+</plist>
