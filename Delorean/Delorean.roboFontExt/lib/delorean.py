@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+#Delorean: Interpolation Preview by CJ Dunn. 
+#Thanks to Frederik Berlaen and David Jonathan Ross. 
+
 import vanilla
 from mojo.glyphPreview import GlyphPreview
 from vanilla import Box
@@ -65,8 +68,8 @@ class Dialog(BaseWindowController):
         #use minSize to make window re-sizable        
         self.w = vanilla.Window((400,400), 'Delorean: Interpolation Preview', minSize=(200,200))
         
-        self.w.oneTextBox = vanilla.TextBox((x, y, 200, lineHeight), '[1] '+font1.info.fullName)
-        self.w.twoTextBox = vanilla.TextBox((x+200, y, 200, lineHeight), '[2] '+font2.info.fullName)
+        self.w.oneTextBox = vanilla.TextBox((x, y, 200, lineHeight), '[1] '+font1.info.familyName or ‘Family’ + ‘ ‘ + font1.info.styleName or ‘Style’)
+        self.w.twoTextBox = vanilla.TextBox((x+200, y, 200, lineHeight), '[2] '+font2.info.familyName or ‘Family’ + ‘ ‘ + font2.info.styleName or ‘Style’)
              
         #Line Return
         y += lineHeight
