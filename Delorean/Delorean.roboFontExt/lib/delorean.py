@@ -13,15 +13,7 @@ from mojo.events import addObserver, removeObserver
 import sys
 
 
-#set Initial Glyph to glyphInit if it exists in font
-glyphInit = '.notdef'
-#checks to see if glyphInit exists
-if glyphInit in CurrentFont().keys():
-    gInit = CurrentFont()[glyphInit]
-else:
-    #if it doesn't exist, this gets first glyph in font
-    key = CurrentFont().keys()[0]
-    gInit = CurrentFont()[key]
+
 
 class Dialog(BaseWindowController):
     
@@ -36,6 +28,8 @@ class Dialog(BaseWindowController):
         removeObserver(self, "currentGlyphChanged")
         removeObserver(self, "draw")            
         removeObserver(self,  "updateReport")
+        removeObserver(self, "checkReport")
+
         
         removeObserver(self,  "interpSetGlyph")
     
@@ -68,8 +62,8 @@ class Dialog(BaseWindowController):
         #use minSize to make window re-sizable        
         self.w = vanilla.Window((400,400), 'Delorean: Interpolation Preview', minSize=(200,200))
         
-        self.w.oneTextBox = vanilla.TextBox((x, y, 200, lineHeight), '[1] '+font1.info.familyName or ‘Family’ + ‘ ‘ + font1.info.styleName or ‘Style’)
-        self.w.twoTextBox = vanilla.TextBox((x+200, y, 200, lineHeight), '[2] '+font2.info.familyName or ‘Family’ + ‘ ‘ + font2.info.styleName or ‘Style’)
+        self.w.oneTextBox = vanilla.TextBox((x, y, 200, lineHeight), '[1] '+font1.info.familyName or 'Family' + ' ' + font1.info.styleName or 'Style')
+        self.w.twoTextBox = vanilla.TextBox((x+200, y, 200, lineHeight), '[2] '+font2.info.familyName or 'Family' + ' ' + font2.info.styleName or 'Style')
              
         #Line Return
         y += lineHeight
@@ -262,6 +256,20 @@ if len(AllFonts()) < 2:
 else: 
     font1 = CurrentFont()
     font2 = AllFonts()[1]
+    
+    
+    
+    
+    #set Initial Glyph to glyphInit if it exists in font
+    glyphInit = '.notdef'
+    #checks to see if glyphInit exists
+    if glyphInit in font1.keys():
+        gInit = font1[glyphInit]
+    else:
+        #if it doesn't exist, this gets first glyph in font
+        key = font1.keys()[0]
+        gInit = font1[key]
+    
 
 
 
