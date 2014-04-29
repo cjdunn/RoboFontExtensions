@@ -32,5 +32,9 @@
 	<real>1398142764.345782</real>
 	<key>version</key>
 	<string>0.1</string>
+	<key>repository</key>
+	<string>cjdunn/RoboFontExtensions</string>
+	<key>extensionPath</key>
+	<string>Delorean/Delorean.roboFontExt</string>
 </dict>
 </plist>
