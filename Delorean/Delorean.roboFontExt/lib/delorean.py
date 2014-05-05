@@ -21,16 +21,18 @@ class Dialog(BaseWindowController):
         #init for glyphChangeObserver
         addObserver(self, "glyphChangeObserver", "currentGlyphChanged")
         addObserver(self, "glyphOutlineChangeObserver", "draw")
+        
         addObserver(self, "checkReport", "updateReport")
+        addObserver(self, "generate", "generateCallback")
   
     
     def deactivateModule(self):
         removeObserver(self, "currentGlyphChanged")
-        removeObserver(self, "draw")            
+        removeObserver(self, "draw") 
         removeObserver(self,  "updateReport")
         removeObserver(self, "checkReport")
-
         
+        removeObserver(self, "generateCallback")
         removeObserver(self,  "interpSetGlyph")
     
 
@@ -85,13 +87,18 @@ class Dialog(BaseWindowController):
         
         y += lineHeight
         y += 15
-    
+        
         
         #-5 from bottom
         self.w.preview = GlyphPreview((0, y, -0, -5) )
         
         #Report
         self.w.reportText = vanilla.TextBox((x, -27, 400, lineHeight), '')
+        
+        #generate instance
+        self.w.generate = vanilla.Button( (-35, -27, 27, lineHeight), u"⬇" , callback=self.generateCallback )        
+        
+                
 
         if CurrentGlyph() != None:
             g = CurrentGlyph()
@@ -111,6 +118,9 @@ class Dialog(BaseWindowController):
 
 
     def interpSetGlyph(self, gname):
+        
+        
+        
         if gname in font1 and gname in font2:
                     
             i = self.interp(self.value, gname)        
@@ -124,11 +134,12 @@ class Dialog(BaseWindowController):
             self.w.preview.setGlyph(i)
             
             #Status: good
-            reportText = u"✓"
+            reportText = u"😎"
             self.w.reportText.set(reportText)
         else:
+            
             #Status: no good
-            reportText = u"☒"
+            reportText = u"😡"
             self.w.reportText.set(reportText)
             
             #Glyphname must exist in both fonts
@@ -145,18 +156,20 @@ class Dialog(BaseWindowController):
 
         else:
             g = gInit
+                   
+        gname = g.name         
         
-            
-        gname = g.name 
+
         
         #when glyph changes, check if it's interpolable
         self.updateReport(gname)
-        self.interpSetGlyph(gname)
+        
 
+        
+        self.interpSetGlyph(gname)        
         #sets gname in box when glyph changes
         self.w.gnameTextInput.set(gname)
-        
-        
+                        
     def glyphOutlineChangeObserver(self, info):
         
         #gname4
@@ -180,24 +193,57 @@ class Dialog(BaseWindowController):
 
     def checkReport(self, gname):
         reportText = ''
+        
+        if gname in font1 and gname in font2:
+            glyph1 = self.font1[gname]
+            glyph2 = self.font2[gname]
+        
+            report = glyph1.isCompatible(glyph2)
 
-        glyph1 = self.font1[gname]
-        glyph2 = self.font2[gname]
-        
-        report = glyph1.isCompatible(glyph2)
-        if report[0] == False:
-            reportText = u"☒ *** /" + gname + " is not compatible for interpolation ***" 
-        
+            if report[0] == False:
+                #no good
+                reportText = u"😡 *** /" + gname + " is not compatible for interpolation ***" 
+            else:
+                #Status: good
+                reportText = u"😎"
         else:
-            #Status: good
-            reportText = u"✓"
+            pass
         
         return reportText
             
-
+    def generateCallback(self, sender):
+        #print 'Generate1'
+        #i = self.interp(self.value, self.gname)
+        
+        gname = self.w.gnameTextInput.get()
+        
+        #generates to new one
+        #self.font1
+        f = CurrentFont()
+        
+        pcnt = int((self.value)*100)
+        
+        instanceName = gname+'.'+str(pcnt)
+        
+        if gname in font1 and gname in font2:
+            i =  self.interp(self.value, gname)
+        
+            f.insertGlyph(i, instanceName)
+        
+            print '\nGlyph "'+instanceName+'" added to CurrentFont()'
+            f.update()
+        
+        #print self.value, gname
+    
+        
+        
     def updateReport(self, gname):
+
         reportText = ''
+
         reportText = self.checkReport(gname)
+    
+  
         self.w.reportText.set(reportText)
         
         
