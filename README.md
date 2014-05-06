@@ -1,7 +1,7 @@
 RoboFontExtensions
 ==================
 
-Delorean: Interpolation Preview
+Delorean: Interpolation Preview  
 -Start by opening two UFOs which are compatible for interpolation  
 –Use the slider or arrows to preview interpolation of a glyph at different values  
 –Delorean will update the preview live as you adjust the glyph’s outline in the originals  
