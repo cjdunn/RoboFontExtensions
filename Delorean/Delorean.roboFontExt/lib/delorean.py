@@ -12,6 +12,11 @@ from defconAppKit.windows.baseWindow import BaseWindowController
 from mojo.events import addObserver, removeObserver
 import sys
 
+from mojo.events import addObserver, removeObserver, postEvent
+
+
+#need to call input "Delorean Knob" in RoboDuino
+
 
 
 
@@ -21,9 +26,11 @@ class Dialog(BaseWindowController):
         #init for glyphChangeObserver
         addObserver(self, "glyphChangeObserver", "currentGlyphChanged")
         addObserver(self, "glyphOutlineChangeObserver", "draw")
-        
         addObserver(self, "checkReport", "updateReport")
         addObserver(self, "generate", "generateCallback")
+        
+        addObserver(self, 'inputChanged', 'RoboControlInput')
+
   
     
     def deactivateModule(self):
@@ -31,9 +38,11 @@ class Dialog(BaseWindowController):
         removeObserver(self, "draw") 
         removeObserver(self,  "updateReport")
         removeObserver(self, "checkReport")
-        
         removeObserver(self, "generateCallback")
         removeObserver(self,  "interpSetGlyph")
+        
+        removeObserver(self, 'RoboControlInput')
+
     
 
     def __init__(self, value, font1, font2):
@@ -84,6 +93,10 @@ class Dialog(BaseWindowController):
         # "Percentage" Slider
         #Value
         self.w.valueTextInput = SliderEditIntStepper((x+105, y, -10, 22), minValue=-200, maxValue=400, value=50, increment=10, callback=self.setterButtonCallback)
+        
+        
+        
+        
         
         y += lineHeight
         y += 15
@@ -290,6 +303,21 @@ class Dialog(BaseWindowController):
         
         return dest
         
+        
+    def inputChanged(self, info):
+        #print 'inputChanged'
+        #self.w.value.set(str(info))
+        
+        if info['name'] == 'Delorean Knob':
+            #output =  str(info['value'])
+            #self.w.value.set(output)
+            
+            scaledValue = (info['value'] * 600) - 200
+                        
+        
+            self.w.valueTextInput.set(scaledValue)
+            
+            self.setterButtonCallback(None)
 
     def windowCloseCallback(self, sender):
         self.deactivateModule()
