@@ -51,6 +51,9 @@ class Dialog(BaseWindowController):
 
     def __init__(self, value, font1, font2):
         self.activateModule()
+        
+        #sets initial value
+        #self.redBlink = False
        
         
         x = 10
@@ -155,7 +158,8 @@ class Dialog(BaseWindowController):
             #Status: good
             reportText = u"😎"
             self.w.reportText.set(reportText)
-            self.redOff()
+            
+            #self.redBlinkOff()
             
         else:
             
@@ -164,7 +168,8 @@ class Dialog(BaseWindowController):
             self.w.reportText.set(reportText)
             
             #blinks red if there's a problem            
-            self.redBlink()
+            #self.redBlink()
+            #print 'blink red'
             
             #Glyphname must exist in both fonts
              
@@ -410,9 +415,16 @@ class Dialog(BaseWindowController):
         postEvent('RoboControlOutput', name='RedLED', state='off')
         postEvent('RoboControlOutput', name='GreenLED', state='off')
         
-        
+    #not working for some reason
     def redBlink(self):
-        postEvent('RoboControlOutput', name='RedLED', state='blink', value=500)
+        if self.redBlink == False:
+            postEvent('RoboControlOutput', name='RedLED', state='blink', value=500)
+            self.redBlink = True
+        
+    def redBlinkOff(self):
+        if self.redBlink == True:
+            self.redBlink = False
+            postEvent('RoboControlOutput', name='RedLED', state='off')
         
         
         
