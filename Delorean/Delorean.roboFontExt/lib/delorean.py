@@ -14,6 +14,8 @@ import sys
 
 from mojo.events import addObserver, removeObserver, postEvent
 
+import time
+
 
 #need to call input "Delorean Knob", "Delorean Encoder", and "Delorean Button" in RoboDuino
 #LEDs called "RedLED", "GreenLED", and "BlueLED"
@@ -54,6 +56,8 @@ class Dialog(BaseWindowController):
         
         #sets initial value
         #self.redBlink = False
+        global redIsOn
+        redIsOn = False
        
         
         x = 10
@@ -160,6 +164,8 @@ class Dialog(BaseWindowController):
             self.w.reportText.set(reportText)
             
             #self.redBlinkOff()
+            #or do I need to do it a different way? 
+            self.redOff()
             
         else:
             
@@ -169,6 +175,7 @@ class Dialog(BaseWindowController):
             
             #blinks red if there's a problem            
             #self.redBlink()
+            self.redOn()
             #print 'blink red'
             
             #Glyphname must exist in both fonts
@@ -234,7 +241,8 @@ class Dialog(BaseWindowController):
                 reportText = u"😡 *** /" + gname + " is not compatible for interpolation ***" 
                 
                 #blinks red if there's a problem            
-                self.redBlink()
+                #self.redBlink()
+                self.redOn()
                 
             else:
                 #Status: good
@@ -308,7 +316,7 @@ class Dialog(BaseWindowController):
             self.blueOn()
             
         if pcnt > 0 and pcnt < 100:
-            #self.allOff()
+            self.allOff()
             pass
             
         
@@ -396,34 +404,48 @@ class Dialog(BaseWindowController):
     #LED Support via RoboControl
     
     def redOn(self):
-        postEvent('RoboControlOutput', name='RedLED', state='brightness', value=.5)
+        global redIsOn
+        redIsOn = True
+        postEvent('RoboControlOutput', name='RGBLED', state='on', value='red')
+        postEvent('RoboControlOutput', name='RedLED', state='on', value='.5')
+        
     def redOff(self):
-        postEvent('RoboControlOutput', name='RedLED', state='off')
+        global redIsOn
+        if redIsOn == True:
+            postEvent('RoboControlOutput', name='RGBLED', state='off')
+            redIsOn = False
 
     def greenOn(self):
-        postEvent('RoboControlOutput', name='GreenLED', state='brightness', value=.5)
+        postEvent('RoboControlOutput', name='RGBLED', state='on', value='green')
+        postEvent('RoboControlOutput', name='GreenLED', state='on', value='.5')
+        
     def greenOff(self):
-        postEvent('RoboControlOutput', name='GreenLED', state='off')
+        postEvent('RoboControlOutput', name='RGBLED', state='off')
 
     def blueOn(self):
-        postEvent('RoboControlOutput', name='BlueLED', state='brightness', value=.5)
+        postEvent('RoboControlOutput', name='RGBLED', state='on', value='blue')
+        postEvent('RoboControlOutput', name='BlueLED', state='on', value='.5')
+        
     def blueOff(self):
-        postEvent('RoboControlOutput', name='BlueLED', state='off')
+        postEvent('RoboControlOutput', name='RGBLED', state='off')
         
     def allOff(self):
-        postEvent('RoboControlOutput', name='BlueLED', state='off')
+        postEvent('RoboControlOutput', name='RGBLED', state='off')
+        
         postEvent('RoboControlOutput', name='RedLED', state='off')
         postEvent('RoboControlOutput', name='GreenLED', state='off')
+        postEvent('RoboControlOutput', name='BlueLED', state='off')
+
         
     #not working for some reason
     def redBlink(self):
-        if self.redBlink == False:
-            postEvent('RoboControlOutput', name='RedLED', state='blink', value=500)
-            self.redBlink = True
+        if self.redBlinking == False:
+            postEvent('RoboControlOutput', name='RGBLED', state='blink', value=('red', 500))
+            self.redBlinking = True
         
     def redBlinkOff(self):
-        if self.redBlink == True:
-            self.redBlink = False
+        if self.redBlinking == True:
+            self.redBlinking = False
             postEvent('RoboControlOutput', name='RedLED', state='off')
         
         
