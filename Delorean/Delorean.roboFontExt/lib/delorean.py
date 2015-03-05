@@ -14,8 +14,12 @@ import sys
 
 from mojo.events import addObserver, removeObserver, postEvent
 
+import time
 
-#need to call input "Delorean Knob" in RoboDuino
+
+#need to call input "Delorean Knob", "Delorean Encoder", and "Delorean Button" in RoboDuino
+#LEDs called "RedLED", "GreenLED", and "BlueLED"
+
 
 
 
@@ -42,11 +46,18 @@ class Dialog(BaseWindowController):
         removeObserver(self,  "interpSetGlyph")
         
         removeObserver(self, 'RoboControlInput')
+        
+        self.allOff()
 
     
 
     def __init__(self, value, font1, font2):
         self.activateModule()
+        
+        #sets initial value
+        #self.redBlink = False
+        global redIsOn
+        redIsOn = False
        
         
         x = 10
@@ -93,6 +104,8 @@ class Dialog(BaseWindowController):
         # "Percentage" Slider
         #Value
         self.w.valueTextInput = SliderEditIntStepper((x+105, y, -10, 22), minValue=-200, maxValue=400, value=50, increment=10, callback=self.setterButtonCallback)
+        
+
         
         
         
@@ -149,11 +162,21 @@ class Dialog(BaseWindowController):
             #Status: good
             reportText = u"😎"
             self.w.reportText.set(reportText)
+            
+            #self.redBlinkOff()
+            #or do I need to do it a different way? 
+            self.redOff()
+            
         else:
             
             #Status: no good
             reportText = u"😡"
             self.w.reportText.set(reportText)
+            
+            #blinks red if there's a problem            
+            #self.redBlink()
+            self.redOn()
+            #print 'blink red'
             
             #Glyphname must exist in both fonts
              
@@ -216,6 +239,11 @@ class Dialog(BaseWindowController):
             if report[0] == False:
                 #no good
                 reportText = u"😡 *** /" + gname + " is not compatible for interpolation ***" 
+                
+                #blinks red if there's a problem            
+                #self.redBlink()
+                self.redOn()
+                
             else:
                 #Status: good
                 reportText = u"😎"
@@ -273,6 +301,26 @@ class Dialog(BaseWindowController):
         
         self.interpSetGlyph(gname)
         
+        pcnt = int(self.w.valueTextInput.get())
+        
+        if pcnt > 100:
+            #print '+'
+            self.allOff()
+            self.redOn()
+            
+
+                    
+        if pcnt < 0:
+            #print '-'
+            self.allOff()
+            self.blueOn()
+            
+        if pcnt > 0 and pcnt < 100:
+            self.allOff()
+            pass
+            
+        
+        
             
     def interp(self, value, gname):
         font1 = self.font1
@@ -309,19 +357,101 @@ class Dialog(BaseWindowController):
         #self.w.value.set(str(info))
         
         if info['name'] == 'Delorean Knob':
-            #output =  str(info['value'])
-            #self.w.value.set(output)
             
             scaledValue = (info['value'] * 600) - 200
-                        
-        
             self.w.valueTextInput.set(scaledValue)
-            
             self.setterButtonCallback(None)
+            
+        if info['name'] == 'Delorean Encoder':
+            #currentValue = self.w.valueTextInput.get()
+            
+            if info['state'] == 'cw':
+                #newValue = currentValue +10
+                
+                #go to next glyph in sort order
+                pass
+                
+                
+            if info['state'] == 'ccw':
+                #newValue = currentValue -10
+                
+                #go to previous glyph in sort order
+                pass
+                                
+            #self.w.valueTextInput.set(newValue)
+            #self.setterButtonCallback(None)
 
+        if info['name'] == 'Delorean Button':
+
+            if info['state'] == 'down':
+                self.greenOn()
+            
+            if info['state'] == 'up':
+                self.greenOff()
+                #when clicked
+                #save interpolation to CurrentFont()
+                self.generateCallback(None)
+
+
+
+            
+#do I still need this? 
     def windowCloseCallback(self, sender):
         self.deactivateModule()
         BaseWindowController.windowCloseCallback(self, sender)   
+
+
+    #LED Support via RoboControl
+    
+    def redOn(self):
+        global redIsOn
+        redIsOn = True
+        postEvent('RoboControlOutput', name='RGBLED', state='on', value='red')
+        postEvent('RoboControlOutput', name='RedLED', state='on', value='.5')
+        
+    def redOff(self):
+        global redIsOn
+        if redIsOn == True:
+            postEvent('RoboControlOutput', name='RGBLED', state='off')
+            redIsOn = False
+
+    def greenOn(self):
+        postEvent('RoboControlOutput', name='RGBLED', state='on', value='green')
+        postEvent('RoboControlOutput', name='GreenLED', state='on', value='.5')
+        
+    def greenOff(self):
+        postEvent('RoboControlOutput', name='RGBLED', state='off')
+
+    def blueOn(self):
+        postEvent('RoboControlOutput', name='RGBLED', state='on', value='blue')
+        postEvent('RoboControlOutput', name='BlueLED', state='on', value='.5')
+        
+    def blueOff(self):
+        postEvent('RoboControlOutput', name='RGBLED', state='off')
+        
+    def allOff(self):
+        postEvent('RoboControlOutput', name='RGBLED', state='off')
+        
+        postEvent('RoboControlOutput', name='RedLED', state='off')
+        postEvent('RoboControlOutput', name='GreenLED', state='off')
+        postEvent('RoboControlOutput', name='BlueLED', state='off')
+
+        
+    #not working for some reason
+    def redBlink(self):
+        if self.redBlinking == False:
+            postEvent('RoboControlOutput', name='RGBLED', state='blink', value=('red', 500))
+            self.redBlinking = True
+        
+    def redBlinkOff(self):
+        if self.redBlinking == True:
+            self.redBlinking = False
+            postEvent('RoboControlOutput', name='RedLED', state='off')
+        
+        
+        
+
+
 
 #you must have 2 fonts open
 if len(AllFonts()) < 2:
