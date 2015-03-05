@@ -64,8 +64,8 @@ class Dialog(BaseWindowController):
         #use minSize to make window re-sizable        
         self.w = vanilla.Window((400,400), 'Delorean: Interpolation Preview', minSize=(200,200))
         
-        self.w.oneTextBox = vanilla.TextBox((x, y, 200, lineHeight), '[1] '+font1.info.familyName or 'Family' + ' ' + font1.info.styleName or 'Style')
-        self.w.twoTextBox = vanilla.TextBox((x+200, y, 200, lineHeight), '[2] '+font2.info.familyName or 'Family' + ' ' + font2.info.styleName or 'Style')
+        self.w.oneTextBox = vanilla.TextBox((x, y, 200, lineHeight), '[1] '+str(font1.info.familyName) or 'Family' + ' ' + str(font1.info.styleName) or 'Style')
+        self.w.twoTextBox = vanilla.TextBox((x+200, y, 200, lineHeight), '[2] '+str(font2.info.familyName) or 'Family' + ' ' + str(font2.info.styleName) or 'Style')
              
         #Line Return
         y += lineHeight
@@ -115,7 +115,19 @@ class Dialog(BaseWindowController):
         self.setUpBaseWindowBehavior()    
         self.w.open()
  
-
+    # def getFontName(self,f):
+    #     if f.info.familyName:
+    #         family = f.info.familyName
+    #     else:
+    #         family = 'Family'
+    #     if f.info.styleName:
+    #         style = f.info.styleName
+    #     else:
+    #         style = 'Style'
+                
+    #     fontName = family+' '+style
+        
+    
 
     def interpSetGlyph(self, gname):
         
@@ -297,7 +309,10 @@ class Dialog(BaseWindowController):
 
 #you must have 2 fonts open
 if len(AllFonts()) < 2:
-    print 'You must have two fonts open'
+    print 'Error: You must have two fonts open\nOpen two fonts and try again\n\nExit\n'
+    sys.exit()
+    self.deactivateModule()
+
 
 else: 
     font1 = CurrentFont()
@@ -306,7 +321,9 @@ else:
     
     
     
-    #set Initial Glyph to glyphInit if it exists in font
+#set Initial Glyph to glyphInit if it exists in font
+if len(font1.keys()) > 0:
+
     glyphInit = '.notdef'
     #checks to see if glyphInit exists
     if glyphInit in font1.keys():
@@ -315,10 +332,14 @@ else:
         #if it doesn't exist, this gets first glyph in font
         key = font1.keys()[0]
         gInit = font1[key]
+else: 
+    print 'Error: Both fonts must have glyphs\nDraw some glyphs and try again\n\nExit\n'
+    sys.exit()
+    self.deactivateModule()
     
 
 
 
-    #initial value for interpolation
-    v = .5
-    d = Dialog(v, font1, font2)
+#initial value for interpolation
+v = .5
+d = Dialog(v, font1, font2)
