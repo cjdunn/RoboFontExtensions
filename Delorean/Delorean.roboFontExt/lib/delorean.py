@@ -33,7 +33,7 @@ class Dialog(BaseWindowController):
         addObserver(self, "checkReport", "updateReport")
         addObserver(self, "generate", "generateCallback")
         
-        addObserver(self, 'inputChanged', 'RoboControlInput')
+        addObserver(self, 'inputChanged', 'ControlBoardInput')
 
   
     
