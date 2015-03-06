@@ -17,8 +17,8 @@ from mojo.events import addObserver, removeObserver, postEvent
 import time
 
 
-#need to call input "Delorean Knob", "Delorean Encoder", and "Delorean Button" in RoboDuino
-#LEDs called "RedLED", "GreenLED", and "BlueLED"
+#supports Control Board by Andy Clymer
+#you can use a potentiometer, must be named "Delorean Knob" in Control Board for interpolation slider, a button "Delorean Button" in Control Board for generating instance, and RGB LED is called "RGBLED"
 
 
 
