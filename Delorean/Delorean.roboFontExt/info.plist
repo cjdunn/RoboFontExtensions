@@ -32,9 +32,19 @@
 	<real>1398142764.345782</real>
 	<key>version</key>
 	<string>0.1</string>
-	<key>repository</key>
-	<string>cjdunn/RoboFontExtensions</string>
-	<key>extensionPath</key>
-	<string>Delorean/Delorean.roboFontExt</string>
+	<key>com.robofontmechanic.Mechanic</key>
+
+	<dict>
+		<key>repository</key>
+		<string>cjdunn/RoboFontExtensions</string>
+
+		<key>summary</key>
+  		<string>Preview how a glyph will interpolate while drawing in RoboFont</string>
+
+		<key>extensionPath</key>
+		<string>Delorean/Delorean.roboFontExt</string>
+	</dict>
+
+
 </dict>
 </plist>
