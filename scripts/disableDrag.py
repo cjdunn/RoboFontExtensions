@@ -1,6 +1,8 @@
 from mojo.UI import CurrentSpaceCenter
 from mojo.events import addObserver, removeObserver
 
+#run as a startup script in RF to disable draggable sidebearings
+
 class disableDragObserver(object):
     
     def __init__(self):
@@ -10,12 +12,12 @@ class disableDragObserver(object):
     def deactivateModule(self):
         removeObserver(self, 'spaceCenterDidOpen')
         removeObserver(self, 'fontDidOpen')
-        print 'disableDrag deactivated'
+        #print 'disableDrag deactivated'
         
     def spaceCenterOpenCallback(self, info):
         sp = CurrentSpaceCenter()
         sp.disableDrag(True)
-        print 'disableDrag activated'
+        #print 'disableDrag activated'
         
     def spaceCenterCloseCallback(self, info):
         self.deactivateModule()
