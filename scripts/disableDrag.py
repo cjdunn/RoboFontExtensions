@@ -1,7 +1,7 @@
 from mojo.UI import CurrentSpaceCenter
 from mojo.events import addObserver, removeObserver
 
-#run as a startup script in RF to disable draggable sidebearings
+#run as a startup script in RF to disable draggable sidebearings in Space Center
 
 class disableDragObserver(object):
     
