@@ -19,7 +19,7 @@ class disableDragObserver(object):
 
     def spaceCenterDidOpenCallback(self, info):
         self.disableDrag()
-        pass
+
 
 
     def disableDrag(self):
