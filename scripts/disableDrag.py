@@ -29,7 +29,9 @@ class disableDragObserver(object):
               
         
     def fontCloseCallback(self, info):
-        self.deactivateModule()
+       #maybe I don't need to deactivate? 
+       #self.deactivateModule()
+        pass
 
         
             
