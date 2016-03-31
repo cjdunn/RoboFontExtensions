@@ -6,21 +6,31 @@ from mojo.events import addObserver, removeObserver
 class disableDragObserver(object):
     
     def __init__(self):
-        addObserver(self, 'spaceCenterOpenCallback', 'spaceCenterWillOpen')
-        addObserver(self, 'spaceCenterCloseCallback', 'spaceCenterWillClose')
-        
+        addObserver(self, 'spaceCenterDidOpenCallback', 'spaceCenterDidOpen')
+        addObserver(self, 'fontCloseCallback', 'fontDidClose')
+
+                        
     def deactivateModule(self):
-        removeObserver(self, 'spaceCenterDidOpen')
-        removeObserver(self, 'fontDidOpen')
+        removeObserver(self, 'spaceCenterDidOpen')        
+        removeObserver(self,  'fontDidClose')
         #print 'disableDrag deactivated'
         
-    def spaceCenterOpenCallback(self, info):
+
+
+    def spaceCenterDidOpenCallback(self, info):
+        self.disableDrag()
+        pass
+
+
+    def disableDrag(self):
         sp = CurrentSpaceCenter()
         sp.disableDrag(True)
         #print 'disableDrag activated'
+              
         
-    def spaceCenterCloseCallback(self, info):
+    def fontCloseCallback(self, info):
         self.deactivateModule()
+
         
-    
+            
 disableDragObserver()
