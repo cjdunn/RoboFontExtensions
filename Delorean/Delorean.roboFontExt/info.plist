@@ -29,9 +29,9 @@
 	<key>name</key>
 	<string>Delorean: Interpolation Preview</string>
 	<key>timeStamp</key>
-	<real>1398142764.345782</real>
+	<real>1492892367.14</real>
 	<key>version</key>
-	<string>0.1</string>
+	<string>0.2</string>
 	<key>com.robofontmechanic.Mechanic</key>
 	<dict>
 		<key>repository</key>

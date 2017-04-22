@@ -10,10 +10,12 @@ from lib.UI.stepper import SliderEditIntStepper
 from defconAppKit.windows.baseWindow import BaseWindowController
 from mojo.events import addObserver, removeObserver, postEvent
 import sys
-
+import os
 
 # supports Control Board by Andy Clymer
-# you can use a potentiometer, must be named "Delorean Knob" in Control Board for interpolation slider, a button "Delorean Button" in Control Board for generating instance, and RGB LED is called "RGBLED"
+# you can use a potentiometer, must be named "Delorean Knob" in Control Board
+# for interpolation slider, a button "Delorean Button" in Control Board for
+# generating instance, and RGB LED is called "RGBLED"
 
 
 class Dialog(BaseWindowController):
@@ -37,7 +39,7 @@ class Dialog(BaseWindowController):
 
         self.allOff()
 
-    def __init__(self, value, font1, font2):
+    def __init__(self, value, font1, font2, available_fonts):
         self.activateModule()
 
         # sets initial value
@@ -52,13 +54,11 @@ class Dialog(BaseWindowController):
         self.value = value
         self.font1 = font1
         self.font2 = font2
-
-        self.offset = ''
+        self.available_fonts = available_fonts
 
         # gname1
         if CurrentGlyph() != None:
             g = CurrentGlyph()
-
         else:
             g = gInit
 
@@ -70,12 +70,56 @@ class Dialog(BaseWindowController):
             'Delorean: Interpolation Preview',
             minSize=(200, 200))
 
-        self.w.oneTextBox = vanilla.TextBox(
-            (x, y, 200, lineHeight),
-            '[1] '+str(font1.info.familyName) or 'Family ' + str(font1.info.styleName) or 'Style')
-        self.w.twoTextBox = vanilla.TextBox(
-            (x+200, y, 200, lineHeight),
-            '[2] '+str(font2.info.familyName) or 'Family ' + str(font2.info.styleName) or 'Style')
+        # Figuring out what to display in the dropdown list
+        styleNames_set = False
+        familyNames_set = False
+        familyNames_differ = False
+
+        if all([f.info.styleName for f in self.available_fonts]):
+            styleNames_set = True
+        if all([f.info.familyName for f in self.available_fonts]):
+            familyNames_set = True
+            if len(set([f.info.familyName for f in self.available_fonts])) > 1:
+                familyNames_differ = True
+
+        if styleNames_set:
+            # If style names are all set and family name is all the same
+            # (or not set), display only the style name.
+            # If family names are different, display family name & style name.
+            if familyNames_set:
+                if familyNames_differ:
+                    fontList = ['%s %s' % (f.info.familyName, f.info.styleName) for f in self.available_fonts]
+                else:
+                    fontList = [f.info.styleName for f in self.available_fonts]
+            else:
+                fontList = [f.info.styleName for f in self.available_fonts]
+
+        elif familyNames_set and familyNames_differ:
+            # If for some reason only the family name is set, check if it is
+            # different across UFOs. If it is, use it.
+            fontList = [f.info.familyName for f in self.available_fonts]
+
+        else:
+            # Last resort (neither family nor style name are set), or the
+            # family name is the same across UFOs (and no style name set):
+            # Only display the UFO path.
+            fontList = [os.path.basename(f.path) for f in self.available_fonts]
+
+        # Dropdown menus
+        w_width = self.w.getPosSize()[2]
+        menu_width = w_width/2 - 15
+        # It would be nice to make the dropdown respond to a width change,
+        # of the window, but that is for next time.
+
+        self.w.leftList = vanilla.PopUpButton(
+            (x, y, menu_width, lineHeight), fontList,
+            callback=self.font1ChangeCallback)
+        self.w.leftList.set(self.available_fonts.index(font1))
+
+        self.w.rightList = vanilla.PopUpButton(
+            (-menu_width-x, y, menu_width, lineHeight), fontList,
+            callback=self.font2ChangeCallback)
+        self.w.rightList.set(self.available_fonts.index(font2))
 
         # Line Return
         y += lineHeight
@@ -109,7 +153,8 @@ class Dialog(BaseWindowController):
         self.w.preview = GlyphPreview((0, y, -0, -5))
 
         # Report
-        self.w.reportText = vanilla.TextBox((x, -27, 400, lineHeight), '')
+        self.w.reportText = vanilla.TextBox(
+            (x, -27, 400, lineHeight), '')
 
         # generate instance
         self.w.generate = vanilla.Button(
@@ -122,15 +167,13 @@ class Dialog(BaseWindowController):
             g = gInit
 
         gname = g.name
-
         self.interpSetGlyph(gname)
 
         self.w.box = vanilla.Box((0, (y-9), -0, -30))
-
         self.setUpBaseWindowBehavior()
         self.w.open()
 
-    # def getFontName(self,f):
+    # def getFontName(self, f):
     #     if f.info.familyName:
     #         family = f.info.familyName
     #     else:
@@ -150,9 +193,10 @@ class Dialog(BaseWindowController):
 
             # scales upm to 1000
             upm = font1.info.unitsPerEm
-            self.offset = (font2[gname].width) / 2
+            scale_factor = 1000/float(upm)
+            offset = (font2[gname].width) / 2
 
-            i.scale(((1000/float(upm)), (1000/float(upm))), center=(self.offset, 0))
+            i.scale((scale_factor, scale_factor), center=(offset, 0))
 
             self.w.preview.setGlyph(i)
 
@@ -178,12 +222,20 @@ class Dialog(BaseWindowController):
             # Glyphname must exist in both fonts
             pass
 
+    def font1ChangeCallback(self, info):
+        pick = info.get()
+        self.font1 = self.available_fonts[pick]
+        self.glyphChangeObserver(None)
+
+    def font2ChangeCallback(self, info):
+        pick = info.get()
+        self.font2 = self.available_fonts[pick]
+        self.glyphChangeObserver(None)
+
     def glyphChangeObserver(self, info):
 
-        # gname3
         if CurrentGlyph() != None:
             g = CurrentGlyph()
-
         else:
             g = gInit
 
@@ -198,7 +250,6 @@ class Dialog(BaseWindowController):
 
     def glyphOutlineChangeObserver(self, info):
 
-        # gname4
         if CurrentGlyph() != None:
             g = CurrentGlyph()
 
@@ -340,13 +391,11 @@ class Dialog(BaseWindowController):
 
             if info['state'] == 'cw':
                 # newValue = currentValue +10
-
                 # go to next glyph in sort order
                 pass
 
             if info['state'] == 'ccw':
                 # newValue = currentValue -10
-
                 # go to previous glyph in sort order
                 pass
 
@@ -405,7 +454,6 @@ class Dialog(BaseWindowController):
         postEvent('RoboControlOutput', name='GreenLED', state='off')
         postEvent('RoboControlOutput', name='BlueLED', state='off')
 
-
     # not working for some reason
     def redBlink(self):
         if self.redBlinking == False:
@@ -422,18 +470,39 @@ class Dialog(BaseWindowController):
 if len(AllFonts()) < 2:
     print 'Error: You must have two fonts open\nOpen two fonts and try again\n\nExit\n'
     sys.exit()
-    self.deactivateModule()
 
 else:
-    font1 = CurrentFont()
-    font2 = AllFonts()[1]
+    af = AllFonts()
+    if not all([f.path for f in af]):
+        # A new font is open which never has been saved
+        sys.exit('\nError:Please save new fonts before continuing.')
+
+    if all([f.info.openTypeOS2WeightClass for f in af]):
+        # Sorting font list by weight class if it is set
+        available_fonts = AllFonts('openTypeOS2WeightClass')
+    elif all([f.info.styleName for f in af]):
+        # Alternatively, sorting font list by style name
+        available_fonts = AllFonts('styleName')
+    else:
+        # If nothing is set, nothing is sorted. Could perhaps sort by
+        # path, but that probably does not make a lot of sense.
+        available_fonts = af
+
+    current_index = available_fonts.index(CurrentFont())
+    if current_index == len(available_fonts) - 1:
+        next_index = 0
+    else:
+        next_index = current_index + 1
+
+    font1 = available_fonts[current_index]
+    font2 = available_fonts[next_index]
 
 
-# set Initial Glyph to glyphInit if it exists in font
+# set Initial Glyph to notdef if it exists in font
 if len(font1.keys()) > 0:
 
     glyphInit = '.notdef'
-    # checks to see if glyphInit exists
+    # checks to see if notdef exists
     if glyphInit in font1.keys():
         gInit = font1[glyphInit]
     else:
@@ -443,9 +512,8 @@ if len(font1.keys()) > 0:
 else:
     print 'Error: Both fonts must have glyphs\nDraw some glyphs and try again\n\nExit\n'
     sys.exit()
-    self.deactivateModule()
 
 
 # initial value for interpolation
 v = .5
-d = Dialog(v, font1, font2)
+d = Dialog(v, font1, font2, available_fonts)
