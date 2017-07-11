@@ -12,6 +12,12 @@ from mojo.events import addObserver, removeObserver, postEvent
 import sys
 import os
 
+from mojo.roboFont import version
+
+
+
+
+
 # supports Control Board by Andy Clymer
 # you can use a potentiometer, must be named "Delorean Knob" in Control Board
 # for interpolation slider, a button "Delorean Button" in Control Board for
@@ -196,7 +202,18 @@ class Dialog(BaseWindowController):
             scale_factor = 1000/float(upm)
             offset = (font2[gname].width) / 2
 
-            i.scale((scale_factor, scale_factor), center=(offset, 0))
+            
+                           
+            if version[0] >= '2':
+                #updated for RF 2x 
+                i.scaleBy((scale_factor, scale_factor), origin=(offset, 0))
+            else:    
+                #RF 1x version
+                i.scale((scale_factor, scale_factor), center=(offset, 0))
+                #pass
+            
+
+
 
             self.w.preview.setGlyph(i)
 
@@ -312,7 +329,14 @@ class Dialog(BaseWindowController):
             f.insertGlyph(i, instanceName)
 
             print '\nGlyph "'+instanceName+'" added to CurrentFont()'
-            f.update()
+            
+            if version[0] >= '2':
+                #updated for RF 2x 
+                f.changed()
+            else:    
+                #RF 1x version
+                f.update()    
+            
 
         # print self.value, gname
 
