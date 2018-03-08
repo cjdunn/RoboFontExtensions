@@ -328,7 +328,7 @@ class Dialog(BaseWindowController):
 
             f.insertGlyph(i, instanceName)
 
-            print '\nGlyph "'+instanceName+'" added to CurrentFont()'
+            print ('\nGlyph "'+instanceName+'" added to CurrentFont()')
             
             if version[0] >= '2':
                 #updated for RF 2x 
@@ -492,7 +492,7 @@ class Dialog(BaseWindowController):
 
 # you must have 2 fonts open
 if len(AllFonts()) < 2:
-    print 'Error: You must have two fonts open\nOpen two fonts and try again\n\nExit\n'
+    print ('Error: You must have two fonts open\nOpen two fonts and try again\n\nExit\n')
     sys.exit()
 
 else:
@@ -534,7 +534,7 @@ if len(font1.keys()) > 0:
         key = font1.keys()[0]
         gInit = font1[key]
 else:
-    print 'Error: Both fonts must have glyphs\nDraw some glyphs and try again\n\nExit\n'
+    print ('Error: Both fonts must have glyphs\nDraw some glyphs and try again\n\nExit\n')
     sys.exit()
 
 
