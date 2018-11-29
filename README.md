@@ -8,4 +8,4 @@ RoboFontExtensions
 –The “generate” button in the bottom right will save an instance of the interpolated glyph to your CurrentFont()  
 –The glyph.name must exist in both fonts and the outlines must be compatible for interpolation.  
 –The status indicator in the bottom left corner turns red if either of these conditions aren't met. 
-[Delorean animated preview]( https://raw.githubusercontent.com/cjdunn/RoboFontExtensions/master/Delorean/Delorean.roboFontExt/html/Delorean_sample_anm.png)
+![Delorean animated preview]( https://raw.githubusercontent.com/cjdunn/RoboFontExtensions/master/Delorean/Delorean.roboFontExt/html/Delorean_sample_anm.gif)
