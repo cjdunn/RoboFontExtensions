@@ -313,18 +313,23 @@ class Dialog(BaseWindowController):
 
         if gname in font1 and gname in font2:
             i = self.interp(self.value, gname)
-
-            f.insertGlyph(i, instanceName)
-
-            print ('\nGlyph "'+instanceName+'" added to CurrentFont()')
             
-            if version[0] >= '2':
+            i.name = instanceName
+
+            f.insertGlyph(i) 
+            
+#            f.insertGlyph(i, instanceName)
+            
+            if version >= '2':
                 #updated for RF 2x 
                 f.changed()
-            else:    
+            else:
                 #RF 1x version
                 f.update()    
             
+
+            print ('\nGlyph "'+instanceName+'" added to CurrentFont()')
+
 
         
 
@@ -357,12 +362,22 @@ class Dialog(BaseWindowController):
         if len(font1[gname].components) > 0 or len(font2[gname].components) > 0:
             g1 = font1[gname]
             glyph1 = g1.copy()
-            glyph1.naked().setParent(font1)
+            
+            #not sure if I need a conditional here
+            if version >= "3.0.0":
+                glyph1.naked().setParent(font1) #not working, need to do something different here
+            else:
+                glyph1.naked().setParent(font1)
             glyph1.decompose()
 
             g2 = font2[gname]
             glyph2 = g2.copy()
-            glyph2.naked().setParent(font2)
+            
+            if version >= "3.0.0":
+                glyph2.naked().setParent(font2) #not working, need to do something different here
+            else:
+                glyph2.naked().setParent(font2)
+                
             glyph2.decompose()
 
             # gname, 'has components'
