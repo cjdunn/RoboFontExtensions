@@ -22,6 +22,7 @@ from mojo.roboFont import version
 
 
 
+
 class Dialog(BaseWindowController):
 
     def activateModule(self):
@@ -354,33 +355,47 @@ class Dialog(BaseWindowController):
         pcnt = int(self.w.valueTextInput.get())
 
 
+    def decomposeComponents(self, font, srcGlyph):
+        
+        #for RF3 and newer
+        if version >= "3.0.0":
+            from mojo.pens import DecomposePointPen
+            dstGlyph = RGlyph()
+
+            # copy the width of the source glyph to the destination glyph
+            dstGlyph.width = srcGlyph.width
+
+            # get a pen to draw into the destination glyph
+            dstPen = dstGlyph.getPointPen()
+
+            # create a decompose pen which writes its result into the destination pen
+            decomposePen = DecomposePointPen(font, dstPen)
+
+            # draw the source glyph into the decompose pen
+            # which draws into the destination pen
+            # which draws into the destination glyph
+            srcGlyph.drawPoints(decomposePen)
+
+        #for RF1x            
+        else:
+            dstGlyph = srcGlyph.copy()
+            dstGlyph.naked().setParent(font)
+            dstGlyph.decompose()
+
+                                
+        return dstGlyph
+
 
     def interp(self, value, gname):
         font1 = self.font1
         font2 = self.font2
 
         if len(font1[gname].components) > 0 or len(font2[gname].components) > 0:
-            g1 = font1[gname]
-            glyph1 = g1.copy()
-            
-            #not sure if I need a conditional here
-            if version >= "3.0.0":
-                glyph1.naked().setParent(font1) #not working, need to do something different here
-            else:
-                glyph1.naked().setParent(font1)
-            glyph1.decompose()
+            srcGlyph1 = font1[gname]
+            glyph1 = self.decomposeComponents(font1, srcGlyph1)
 
-            g2 = font2[gname]
-            glyph2 = g2.copy()
-            
-            if version >= "3.0.0":
-                glyph2.naked().setParent(font2) #not working, need to do something different here
-            else:
-                glyph2.naked().setParent(font2)
-                
-            glyph2.decompose()
-
-            # gname, 'has components'
+            srcGlyph2 = font2[gname]
+            glyph2 = self.decomposeComponents(font2, srcGlyph2)
 
         else:
             glyph1 = font1[gname]
