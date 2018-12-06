@@ -415,55 +415,64 @@ class Dialog(BaseWindowController):
         BaseWindowController.windowCloseCallback(self, sender)
 
 
+def runDelorean():
+    # you must have 2 fonts open
+    if len(AllFonts()) < 2:
+        print ('Error: You must have two fonts open\nOpen two fonts and try again\n\nExit\n')
+        #sys.exit()
+        return
 
-# you must have 2 fonts open
-if len(AllFonts()) < 2:
-    print ('Error: You must have two fonts open\nOpen two fonts and try again\n\nExit\n')
-    sys.exit()
 
-else:
-    af = AllFonts()
-    if not all([f.path for f in af]):
-        # A new font is open which never has been saved
-        sys.exit('\nError:Please save new fonts before continuing.')
-
-    if all([f.info.openTypeOS2WeightClass for f in af]):
-        # Sorting font list by weight class if it is set
-        available_fonts = AllFonts('openTypeOS2WeightClass')
-    elif all([f.info.styleName for f in af]):
-        # Alternatively, sorting font list by style name
-        available_fonts = AllFonts('styleName')
     else:
-        # If nothing is set, nothing is sorted. Could perhaps sort by
-        # path, but that probably does not make a lot of sense.
-        available_fonts = af
+        af = AllFonts()
+        if not all([f.path for f in af]):
+            # A new font is open which never has been saved
+            #sys.exit('\nError:Please save new fonts before continuing.')
+            print ('\nError:Please save new fonts before continuing.')
+            return
 
-    current_index = available_fonts.index(CurrentFont())
-    if current_index == len(available_fonts) - 1:
-        next_index = 0
+
+        if all([f.info.openTypeOS2WeightClass for f in af]):
+            # Sorting font list by weight class if it is set
+            available_fonts = AllFonts('openTypeOS2WeightClass')
+        elif all([f.info.styleName for f in af]):
+            # Alternatively, sorting font list by style name
+            available_fonts = AllFonts('styleName')
+        else:
+            # If nothing is set, nothing is sorted. Could perhaps sort by
+            # path, but that probably does not make a lot of sense.
+            available_fonts = af
+
+        current_index = available_fonts.index(CurrentFont())
+        if current_index == len(available_fonts) - 1:
+            next_index = 0
+        else:
+            next_index = current_index + 1
+
+        font1 = available_fonts[current_index]
+        font2 = available_fonts[next_index]
+
+
+    # set Initial Glyph to notdef if it exists in font
+    if len(font1.keys()) > 0:
+
+        glyphInit = '.notdef'
+        # checks to see if notdef exists
+        if glyphInit in font1.keys():
+            gInit = font1[glyphInit]
+        else:
+            # if it doesn't exist, this gets first glyph in font
+            key = font1.keys()[0]
+            gInit = font1[key]
     else:
-        next_index = current_index + 1
-
-    font1 = available_fonts[current_index]
-    font2 = available_fonts[next_index]
-
-
-# set Initial Glyph to notdef if it exists in font
-if len(font1.keys()) > 0:
-
-    glyphInit = '.notdef'
-    # checks to see if notdef exists
-    if glyphInit in font1.keys():
-        gInit = font1[glyphInit]
-    else:
-        # if it doesn't exist, this gets first glyph in font
-        key = font1.keys()[0]
-        gInit = font1[key]
-else:
-    print ('Error: Both fonts must have glyphs\nDraw some glyphs and try again\n\nExit\n')
-    sys.exit()
+        print ('Error: Both fonts must have glyphs\nDraw some glyphs and try again\n\nExit\n')
+        #sys.exit()
+        return
 
 
-# initial value for interpolation
-v = .5
-d = Dialog(v, font1, font2, available_fonts)
+
+    # initial value for interpolation
+    v = .5
+    d = Dialog(v, font1, font2, available_fonts)
+
+runDelorean()
