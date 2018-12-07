@@ -418,7 +418,7 @@ class Dialog(BaseWindowController):
 def runDelorean():
     # you must have 2 fonts open
     if len(AllFonts()) < 2:
-        print ('Error: You must have two fonts open\nOpen two fonts and try again\n\nExit\n')
+        print ('Error: You must have two fonts open\nOpen two fonts and try again\n')
         #sys.exit()
         return
 
@@ -465,7 +465,7 @@ def runDelorean():
             key = font1.keys()[0]
             gInit = font1[key]
     else:
-        print ('Error: Both fonts must have glyphs\nDraw some glyphs and try again\n\nExit\n')
+        print ('Error: Both fonts must have glyphs\nDraw some glyphs and try again\n')
         #sys.exit()
         return
 
