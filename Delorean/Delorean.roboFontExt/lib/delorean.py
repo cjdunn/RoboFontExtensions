@@ -190,6 +190,9 @@ class Dialog(BaseWindowController):
     #     fontName = family+' '+style
 
     def interpSetGlyph(self, gname):
+        
+        font1 = self.font1
+        font2 = self.font2
 
         if gname in font1 and gname in font2:
 
