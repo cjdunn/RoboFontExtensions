@@ -190,6 +190,9 @@ class Dialog(BaseWindowController):
     #     fontName = family+' '+style
 
     def interpSetGlyph(self, gname):
+        
+        font1 = self.font1
+        font2 = self.font2
 
         if gname in font1 and gname in font2:
 
@@ -277,6 +280,9 @@ class Dialog(BaseWindowController):
         self.updateReport(gname)
 
     def checkReport(self, gname):
+        font1 = self.font1
+        font2 = self.font2
+        
         reportText = ''
 
         if gname in font1 and gname in font2:
@@ -300,6 +306,8 @@ class Dialog(BaseWindowController):
         return reportText
 
     def generateCallback(self, sender):
+        font1 = self.font1
+        font2 = self.font2
 
 
         gname = self.w.gnameTextInput.get()
