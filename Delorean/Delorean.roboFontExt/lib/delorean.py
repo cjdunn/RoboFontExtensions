@@ -43,7 +43,7 @@ class Dialog(BaseWindowController):
 
 
 
-    def __init__(self, value, font1, font2, available_fonts):
+    def __init__(self, value, font1, font2, available_fonts, gInit):
         self.activateModule()
 
         # sets initial value
@@ -59,12 +59,13 @@ class Dialog(BaseWindowController):
         self.font1 = font1
         self.font2 = font2
         self.available_fonts = available_fonts
+        self.gInit = gInit
 
         # gname1
         if CurrentGlyph() != None:
             g = CurrentGlyph()
         else:
-            g = gInit
+            g = self.gInit
 
         self.gname = g
 
@@ -168,7 +169,7 @@ class Dialog(BaseWindowController):
         if CurrentGlyph() != None:
             g = CurrentGlyph()
         else:
-            g = gInit
+            g = self.gInit
 
         gname = g.name
         self.interpSetGlyph(gname)
@@ -250,7 +251,7 @@ class Dialog(BaseWindowController):
         if CurrentGlyph() != None:
             g = CurrentGlyph()
         else:
-            g = gInit
+            g = self.gInit
 
         gname = g.name
 
@@ -267,7 +268,7 @@ class Dialog(BaseWindowController):
             g = CurrentGlyph()
 
         else:
-            g = gInit
+            g = self.gInit
 
         gname = g.name
 
@@ -481,6 +482,6 @@ def runDelorean():
 
     # initial value for interpolation
     v = .5
-    d = Dialog(v, font1, font2, available_fonts)
+    d = Dialog(v, font1, font2, available_fonts, gInit)
 
 runDelorean()
