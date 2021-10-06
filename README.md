@@ -1,7 +1,22 @@
+*** Delorean has grown up and moved to its own repo *** 
+==================
+
+Mechanic 2 will now point to the new repo. 
+
+Please update your links/forks accordingly: 
+https://github.com/cjdunn/delorean
+
+😎
+
+
 RoboFontExtensions
 ==================
 
 ###Delorean: Interpolation Preview  
+
+Delorean now has its own repo, please update your links: 
+https://github.com/cjdunn/delorean
+
 –Start by opening two UFOs which are compatible for interpolation  
 –Use the slider or arrows to preview interpolation of a glyph at different values  
 –Delorean will update the preview live as you adjust the glyph’s outline in the originals  
