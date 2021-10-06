@@ -1,10 +1,10 @@
 *** Delorean has grown up and moved to its own repo *** 
 ==================
 
-Mechanic 2 will now point to the new repo. 
-
 Please update your links/forks accordingly: 
 https://github.com/cjdunn/delorean
+
+[Mechanic](https://github.com/robofont-mechanic/mechanic-2) will now point to the new repo. 
 
 😎
 
